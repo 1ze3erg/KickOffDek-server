@@ -187,7 +187,7 @@ async function updateUser(req, res, next) {
                 instagram,
                 twitter,
                 website,
-                province,
+                // province,
                 country,
             },
             { where: { id: req.user.id } }
