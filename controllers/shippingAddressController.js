@@ -67,10 +67,18 @@ async function updateShippingAddress(req, res, next) {
 }
 
 async function deleteShippingAddress(req, res, next) {
-    const { id } = req.params;
-    await ShippingAddress.destroy({ where: { id, userId: req.user.id } });
-    res.status(204).send();
     try {
+        const { id } = req.params;
+
+        const findAddress = await ShippingAddress.findOne({ where: { id, userId: req.user.id } });
+
+        if (!findAddress) {
+            throw new CustomErr("shipping address not found", 400);
+        }
+
+        await ShippingAddress.destroy({ where: { id, userId: req.user.id } });
+
+        res.status(204).send();
     } catch (err) {
         next(err);
     }
