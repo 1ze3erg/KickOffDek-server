@@ -148,4 +148,55 @@ async function loginUserWithGoogle(req, res, next) {
     }
 }
 
-module.exports = { registerUser, checkUserEmail, loginUserWithEmail, loginUserWithGoogle };
+async function getUserById(req, res, next) {
+    try {
+        const findUser = await User.findOne({
+            where: { id: req.user.id },
+            attributes: { exclude: ["id", "password", "loginWith", "createdAt", "updatedAt"] },
+        });
+        res.status(200).send(findUser);
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function updateUser(req, res, next) {
+    try {
+        const {
+            avatar,
+            username,
+            firstName,
+            lastName,
+            phoneNumber,
+            facebook,
+            instagram,
+            twitter,
+            website,
+            province,
+            country,
+        } = req.body;
+
+        await User.update(
+            {
+                avatar,
+                username,
+                firstName,
+                lastName,
+                phoneNumber,
+                facebook,
+                instagram,
+                twitter,
+                website,
+                province,
+                country,
+            },
+            { where: { id: req.user.id } }
+        );
+
+        res.status(200).send({ msg: `${req.user.email} has been updated` });
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { registerUser, checkUserEmail, loginUserWithEmail, loginUserWithGoogle, getUserById, updateUser };

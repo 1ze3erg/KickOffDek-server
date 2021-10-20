@@ -5,15 +5,16 @@ const {
     checkUserEmail,
     loginUserWithEmail,
     loginUserWithGoogle,
+    getUserById,
+    updateUser,
 } = require("../controllers/userController");
 const router = express.Router();
 
+router.get("/get-user", passport.authenticate("jwt-user", { session: false }), getUserById);
 router.post("/register", registerUser);
-router.post("/checkUserEmail", checkUserEmail);
-router.post("/loginWithEmail", loginUserWithEmail);
-router.post("/loginWithGoogle", loginUserWithGoogle);
-router.put("/update", passport.authenticate("jwt-user", { session: false }), (req, res) => {
-    res.send(req.user);
-});
+router.post("/check-user-email", checkUserEmail);
+router.post("/login-with-email", loginUserWithEmail);
+router.post("/login-with-google", loginUserWithGoogle);
+router.put("/update-user", passport.authenticate("jwt-user", { session: false }), updateUser);
 
 module.exports = router;
