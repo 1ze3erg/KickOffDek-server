@@ -185,7 +185,7 @@ async function updateUser(req, res, next) {
                 phoneNumber,
                 facebook,
                 instagram,
-                twitter,
+                // twitter,
                 website,
                 province,
                 country,
