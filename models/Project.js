@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             website: DataTypes.STRING,
             coverImage: DataTypes.STRING,
             campaignImage: DataTypes.STRING,
+            pitchVideo: DataTypes.STRING,
             campaignStory: DataTypes.TEXT,
             budgetOverview: DataTypes.TEXT,
             risk: DataTypes.TEXT
