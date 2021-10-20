@@ -13,8 +13,8 @@ const {
 const router = express.Router();
 
 router.get("/get-all", getAllProject);
-router.get("/get-project-by-id/:id", getProjectById);
-router.get("/get-project-by-user-id", passport.authenticate("jwt-user", { session: false }), getProjectByCreatorUserId);
+router.get("/get-by-id/:id", getProjectById);
+router.get("/get-by-user-id", passport.authenticate("jwt-user", { session: false }), getProjectByCreatorUserId);
 router.post("/create", passport.authenticate("jwt-user", { session: false }), createProject);
 router.put("/update/:id", passport.authenticate("jwt-user", { session: false }), updateProject);
 router.put("/user-update-status/:id", passport.authenticate("jwt-user", { session: false }), updateProjectStatusByUser);
