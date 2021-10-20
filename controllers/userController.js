@@ -101,6 +101,9 @@ async function loginUserWithEmail(req, res, next) {
         const findUser = await User.findOne({ where: { email } });
         let isCorrectPassword;
         if (findUser) {
+            if (findUser.loginWith === "email") {
+                throw new CustomErr("You already have account by login with google", 400);
+            }
             isCorrectPassword = await bcrypt.compare(password, findUser.password);
         }
 
@@ -125,7 +128,14 @@ async function loginUserWithGoogle(req, res, next) {
 
         if (findUser) {
             if (findUser.loginWith === "google") {
-                return res.status(200).send({ msg: "You can sign in with google" });
+                const isCorrectGoogleId = await bcrypt.compare(googleId, findUser.password);
+                if (isCorrectGoogleId) {
+                    const payload = { id: findUser.id, username: findUser.username };
+                    const secretKey = process.env.TOKEN_KEY;
+                    const token = await jwt.sign(payload, secretKey, { expiresIn: "7d" });
+                    return res.status(200).send({ msg: "login with google success", token });
+                }
+                throw new CustomErr("can't login with google", 400);
             }
             throw new CustomErr("You already have account by register email", 400);
         }
