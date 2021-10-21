@@ -7,6 +7,7 @@ const userRoute = require("./routes/userRoute");
 const shippingAddressRoute = require("./routes/shippingAddressRoute");
 const projectRoute = require("./routes/projectRoute");
 const categoryRoute = require("./routes/categoryRoute");
+const typeRoute = require("./routes/typeRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
@@ -23,6 +24,7 @@ app.use("/users", userRoute);
 app.use("/shipping-addresses", shippingAddressRoute);
 app.use("/projects", projectRoute);
 app.use("/categories", categoryRoute);
+app.use("/types", typeRoute);
 
 // 404 not found
 app.use((req, res, next) => {
