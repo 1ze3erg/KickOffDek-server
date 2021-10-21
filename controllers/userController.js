@@ -184,11 +184,11 @@ async function loginUserWithGoogle(req, res, next) {
 
 async function getUserById(req, res, next) {
     try {
-        const findUser = await User.findOne({
+        const user = await User.findOne({
             where: { id: req.user.id },
             attributes: { exclude: ["id", "password", "loginWith", "createdAt", "updatedAt"] },
         });
-        res.status(200).send(findUser);
+        res.status(200).send(user);
     } catch (err) {
         next(err);
     }

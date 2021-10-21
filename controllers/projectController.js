@@ -14,13 +14,7 @@ async function getAllProject(req, res, next) {
 async function getProjectById(req, res, next) {
     try {
         const { id } = req.params;
-
-        const findProject = await Project.findOne({ where: { id } });
-
-        if (!findProject) {
-            throw new CustomErr("project not found", 400);
-        }
-
+        const project = await Project.findOne({ where: { id } });
         res.status(200).send(findProject);
     } catch (err) {
         next(err);
