@@ -45,4 +45,22 @@ async function updateCategory(req, res, next) {
     }
 }
 
-module.exports = { getAllCategory, createCategory, updateCategory };
+async function deleteCategory(req, res, next) {
+    try {
+        const { id } = req.params;
+
+        const findCategory = await Category.findOne({ where: { id } });
+
+        if (!findCategory) {
+            throw new CustomErr("category not found", 400);
+        }
+
+        await Category.destroy({ where: { id } });
+
+        res.status(204).send();
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { getAllCategory, createCategory, updateCategory, deleteCategory };
