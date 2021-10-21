@@ -11,7 +11,7 @@ async function getCommentByProjectId(req, res, next) {
     }
 }
 
-async function createCommentByUser(req, res, next) {
+async function createComment(req, res, next) {
     try {
         const { projectId, message } = req.body;
 
@@ -41,7 +41,7 @@ async function createCommentByUser(req, res, next) {
     }
 }
 
-async function updateCommentByUser(req, res, next) {
+async function updateComment(req, res, next) {
     try {
         const { id } = req.params;
         const { message } = req.body;
@@ -71,7 +71,7 @@ async function updateCommentByUser(req, res, next) {
     }
 }
 
-async function deleteCommentByUser(req, res, next) {
+async function deleteComment(req, res, next) {
     try {
         const { id } = req.params;
 
@@ -89,4 +89,4 @@ async function deleteCommentByUser(req, res, next) {
     }
 }
 
-module.exports = { getCommentByProjectId, createCommentByUser, updateCommentByUser, deleteCommentByUser };
+module.exports = { getCommentByProjectId, createComment, updateComment, deleteComment };
