@@ -9,6 +9,7 @@ const projectRoute = require("./routes/projectRoute");
 const categoryRoute = require("./routes/categoryRoute");
 const typeRoute = require("./routes/typeRoute");
 const currencyRoute = require("./routes/currencyRoute");
+const rewardRoute = require("./routes/rewardRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
@@ -27,6 +28,7 @@ app.use("/projects", projectRoute);
 app.use("/categories", categoryRoute);
 app.use("/types", typeRoute);
 app.use("/currencies", currencyRoute);
+app.use("/rewards", rewardRoute);
 
 // 404 not found
 app.use((req, res, next) => {

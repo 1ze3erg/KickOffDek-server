@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.ENUM("draft", "review", "live", "successful", "failed", "canceled"),
                 allowNull: false,
             },
-            target: DataTypes.INTEGER,
+            target: DataTypes.DECIMAL(10, 2),
             startDate: DataTypes.DATE,
             endDate: DataTypes.DATE,
             organization: DataTypes.STRING,

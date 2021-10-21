@@ -101,7 +101,7 @@ async function loginUserWithEmail(req, res, next) {
         const findUser = await User.findOne({ where: { email } });
         let isCorrectPassword;
         if (findUser) {
-            if (findUser.loginWith === "email") {
+            if (findUser.loginWith === "google") {
                 throw new CustomErr("You already have account by login with google", 400);
             }
             isCorrectPassword = await bcrypt.compare(password, findUser.password);
