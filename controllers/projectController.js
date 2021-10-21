@@ -14,7 +14,7 @@ async function getAllProject(req, res, next) {
 async function getProjectById(req, res, next) {
     try {
         const { id } = req.params;
-        
+
         const findProject = await Project.findOne({ where: { id } });
 
         if (!findProject) {
@@ -139,7 +139,7 @@ async function updateProject(req, res, next) {
                 typeId,
                 currencyId,
             },
-            { id, creatorUserId: req.user.id }
+            { where: { id, creatorUserId: req.user.id } }
         );
 
         res.status(200).send({ msg: "project has been updated" });
@@ -154,7 +154,7 @@ async function updateProjectStatusByUser(req, res, next) {
         const { status } = req.body;
 
         if (status !== "review") {
-            throw new CustomErr(`user can't update status ${status}`, 400);
+            throw new CustomErr(`user can't update to status ${status}`, 400);
         }
 
         await Project.update(
@@ -175,8 +175,8 @@ async function updateProjectStatusByAdmin(req, res, next) {
         const { id } = req.params;
         const { status } = req.body;
 
-        if (status !== "draft" || status !== "live" || status !== "canceled") {
-            throw new CustomErr(`admin can't update status ${status}`, 400);
+        if (status !== "draft" && status !== "live" && status !== "canceled") {
+            throw new CustomErr(`admin can't update to status ${status}`, 400);
         }
 
         await Project.update(
@@ -196,7 +196,7 @@ async function deleteProject(req, res, next) {
     try {
         const { id } = req.params;
 
-        const findProject = Project.findOne({ where: { id, creatorUserId: req.user.id } });
+        const findProject = await Project.findOne({ where: { id, creatorUserId: req.user.id } });
 
         if (!findProject) {
             throw new CustomErr("project not found", 400);
