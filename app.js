@@ -5,6 +5,10 @@ const cors = require("cors");
 const passport = require("passport");
 const userRoute = require("./routes/userRoute");
 const shippingAddressRoute = require("./routes/shippingAddressRoute");
+const projectRoute = require("./routes/projectRoute");
+const categoryRoute = require("./routes/categoryRoute");
+const typeRoute = require("./routes/typeRoute");
+const currencyRoute = require("./routes/currencyRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
@@ -19,6 +23,10 @@ app.use("/public", express.static("public"));
 //path
 app.use("/users", userRoute);
 app.use("/shipping-addresses", shippingAddressRoute);
+app.use("/projects", projectRoute);
+app.use("/categories", categoryRoute);
+app.use("/types", typeRoute);
+app.use("/currencies", currencyRoute);
 
 // 404 not found
 app.use((req, res, next) => {

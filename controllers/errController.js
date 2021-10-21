@@ -19,6 +19,11 @@ function errController(err, req, res, next) {
         msg = err.errors[0]?.message;
     }
 
+    if (err.name === "SequelizeForeignKeyConstraintError") {
+        code = 400;
+        msg = err.message;
+    }
+
     res.status(code || err.code || 500).send({ msg: msg || err.message });
 }
 
