@@ -61,6 +61,15 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: "RESTRICT",
             onDelete: "RESTRICT",
         });
+
+        Project.belongsTo(models.Currency, {
+            foreignKey: {
+                name: "currencyId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
     };
 
     return Project;
