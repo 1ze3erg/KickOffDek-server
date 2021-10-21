@@ -110,7 +110,7 @@ async function loginUserWithEmail(req, res, next) {
         if (findUser && isCorrectPassword) {
             const payload = { id: findUser.id, username: findUser.username };
             const secretKey = process.env.TOKEN_KEY;
-            const token = await jwt.sign(payload, secretKey, { expiresIn: "7d" });
+            const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
             res.status(200).send({ msg: `${findUser.email} login success`, token });
         } else {
             throw new CustomErr("email or password is incorrect", 400);
@@ -124,6 +124,26 @@ async function loginUserWithGoogle(req, res, next) {
     try {
         const { imageUrl, email, googleId, firstName, lastName } = req.body;
 
+        if (!email || email.trim() === "") {
+            throw new CustomErr("email is required", 400);
+        }
+
+        if (!googleId || googleId.trim() === "") {
+            throw new CustomErr("googleId is required", 400);
+        }
+
+        if (!firstName || firstName.trim() === "") {
+            throw new CustomErr("firstName is required", 400);
+        }
+
+        if (!lastName || lastName.trim() === "") {
+            throw new CustomErr("lastName is required", 400);
+        }
+
+        if (!isEmail(email)) {
+            throw new CustomErr("email is invalid", 400);
+        }
+
         const findUser = await User.findOne({ where: { email } });
 
         if (findUser) {
@@ -132,7 +152,7 @@ async function loginUserWithGoogle(req, res, next) {
                 if (isCorrectGoogleId) {
                     const payload = { id: findUser.id, username: findUser.username };
                     const secretKey = process.env.TOKEN_KEY;
-                    const token = await jwt.sign(payload, secretKey, { expiresIn: "7d" });
+                    const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
                     return res.status(200).send({ msg: "login with google success", token });
                 }
                 throw new CustomErr("can't login with google", 400);
@@ -152,7 +172,11 @@ async function loginUserWithGoogle(req, res, next) {
             loginWith: "google",
         });
 
-        res.status(201).send({ msg: `${newUser.email} has been create` });
+        const payload = { id: newUser.id, username: newUser.username };
+        const secretKey = process.env.TOKEN_KEY;
+        const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
+
+        res.status(201).send({ msg: `${newUser.email} has been create`, token });
     } catch (err) {
         next(err);
     }
