@@ -67,7 +67,7 @@ async function updateFaq(req, res, next) {
             throw new CustomErr("You are not creator of this project", 400);
         }
 
-        await Faq.Faq(
+        await Faq.update(
             {
                 question,
                 anwser,

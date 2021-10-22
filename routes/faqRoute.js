@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const { getFaqByProjectId, createFaq, updateFaq, deleteFaq } = require("../controllers/faqController");
 const router = express.Router();
 
