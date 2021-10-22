@@ -5,6 +5,7 @@ const cors = require("cors");
 const passport = require("passport");
 const userRoute = require("./routes/userRoute");
 const shippingAddressRoute = require("./routes/shippingAddressRoute");
+const paymentRoute = require("./routes/paymentRoute");
 const projectRoute = require("./routes/projectRoute");
 const categoryRoute = require("./routes/categoryRoute");
 const typeRoute = require("./routes/typeRoute");
@@ -27,6 +28,7 @@ app.use("/public", express.static("public"));
 //path
 app.use("/users", userRoute);
 app.use("/shipping-addresses", shippingAddressRoute);
+app.use("/payments", paymentRoute);
 app.use("/projects", projectRoute);
 app.use("/categories", categoryRoute);
 app.use("/types", typeRoute);
