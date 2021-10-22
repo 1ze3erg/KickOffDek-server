@@ -52,23 +52,11 @@ async function createUpdate(req, res, next) {
 async function updateUpdate(req, res, next) {
     try {
         const { id } = req.params;
-        const { projectId, title, message } = req.body;
-
-        if (!projectId) {
-            throw new CustomErr("projectId is required", 400);
-        }
-
-        if (!title || title.trim() === "") {
-            throw new CustomErr("title is required", 400);
-        }
-
-        if (!message || message.trim() === "") {
-            throw new CustomErr("message is required", 400);
-        }
+        const { title, message } = req.body;
 
         const findUpdate = await Update.findOne({
             where: { id },
-            include: { model: Project, attribute: "createrUserId" },
+            include: { model: Project, attributes: ["creatorUserId"] },
         });
 
         if (!findUpdate) {
@@ -79,7 +67,7 @@ async function updateUpdate(req, res, next) {
             throw new CustomErr("You are not creator of this project", 400);
         }
 
-        await Comment.update(
+        await Update.update(
             {
                 title,
                 message,
@@ -89,7 +77,7 @@ async function updateUpdate(req, res, next) {
             }
         );
 
-        res.status(200).send({ msg: "comment has been updated" });
+        res.status(200).send({ msg: "update has been updated" });
     } catch (err) {
         next(err);
     }
@@ -101,7 +89,7 @@ async function deleteUpdate(req, res, next) {
 
         const findUpdate = await Update.findOne({
             where: { id },
-            include: { model: Project, attribute: "createrUserId" },
+            include: { model: Project, attributes: ["creatorUserId"] },
         });
 
         if (!findUpdate) {

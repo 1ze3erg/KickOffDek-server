@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("passport");
+const { getUpdateByProjectId, createUpdate, updateUpdate, deleteUpdate } = require("../controllers/updateController");
 const router = express.Router();
 
 router.get("/get-by-project-id/:projectId", getUpdateByProjectId);
