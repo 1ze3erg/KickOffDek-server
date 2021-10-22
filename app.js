@@ -15,6 +15,7 @@ const commentRoute = require("./routes/commentRoute");
 const updateRoute = require("./routes/updateRoute");
 const faqRoute = require("./routes/faqRoute");
 const pledgeRoute = require("./routes/pledgeRoute");
+const savedProjectRoute = require("./routes/savedProjectRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
@@ -39,6 +40,7 @@ app.use("/comments", commentRoute);
 app.use("/updates", updateRoute);
 app.use("/faqs", faqRoute);
 app.use("/pledges", pledgeRoute);
+app.use("/savedProjects", savedProjectRoute);
 
 // 404 not found
 app.use((req, res, next) => {
