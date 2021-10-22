@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
                 name: "projectId",
                 allowNull: false,
             },
-            onFaq: "RESTRICT",
+            onUpdate: "RESTRICT",
             onDelete: "RESTRICT",
         });
     };
