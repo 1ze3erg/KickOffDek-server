@@ -32,6 +32,15 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Pledge.associate = (models) => {
+        Pledge.belongsTo(models.Reward, {
+            foreignKey: {
+                name: "rewardId",
+                allowNull: false,
+            },
+            onFaq: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
+
         Pledge.belongsTo(models.ShippingAddress, {
             foreignKey: {
                 name: "shippingAddressId",
