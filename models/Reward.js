@@ -39,6 +39,15 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: "RESTRICT",
             onDelete: "RESTRICT",
         })
+
+        Reward.hasMany(models.Pledge, {
+            foreignKey: {
+                name: "rewardId",
+                allowNull: false,
+            },
+            onFaq: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
     }
 
     return Reward;
