@@ -15,7 +15,7 @@ async function getProjectById(req, res, next) {
     try {
         const { id } = req.params;
         const project = await Project.findOne({ where: { id } });
-        res.status(200).send(findProject);
+        res.status(200).send(project);
     } catch (err) {
         next(err);
     }
