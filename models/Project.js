@@ -35,6 +35,51 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Project.associate = (models) => {
+        Project.hasMany(models.Comment, {
+            foreignKey: {
+                name: "projectId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
+
+        Project.hasMany(models.Reward, {
+            foreignKey: {
+                name: "projectId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
+
+        Project.hasMany(models.Update, {
+            foreignKey: {
+                name: "projectId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
+
+        Project.hasMany(models.Faq, {
+            foreignKey: {
+                name: "projectId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
+
+        Project.hasMany(models.SavedProject, {
+            foreignKey: {
+                name: "projectId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
+
         Project.belongsTo(models.User, {
             foreignKey: {
                 name: "creatorUserId",

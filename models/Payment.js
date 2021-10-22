@@ -43,14 +43,14 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Payment.associate = (models) => {
-        // Payment.hasMany(models.Pledge, {
-        //     foreignKey: {
-        //         name: "paymentId",
-        //         allowNull: false,
-        //     },
-        //     onUpdate: "RESTRICT",
-        //     onDelete: "RESTRICT",
-        // });
+        Payment.hasMany(models.Pledge, {
+            foreignKey: {
+                name: "paymentId",
+                allowNull: false,
+            },
+            onUpdate: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
 
         Payment.belongsTo(models.User, {
             foreignKey: {
