@@ -12,6 +12,7 @@ const currencyRoute = require("./routes/currencyRoute");
 const rewardRoute = require("./routes/rewardRoute");
 const commentRoute = require("./routes/commentRoute");
 const updateRoute = require("./routes/updateRoute");
+const faqRoute = require("./routes/faqRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
@@ -33,6 +34,7 @@ app.use("/currencies", currencyRoute);
 app.use("/rewards", rewardRoute);
 app.use("/comments", commentRoute);
 app.use("/updates", updateRoute);
+app.use("/faqs", faqRoute);
 
 // 404 not found
 app.use((req, res, next) => {
