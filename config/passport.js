@@ -15,4 +15,18 @@ const userStrategy = new JwtStrategy(
     }
 );
 
+const adminStrategy = new JwtStrategy(
+    { secretOrKey: process.env.TOKEN_KEY, jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() },
+    async (payload, done) => {
+        try {
+            const admin = await Admin.findOne({ where: { id: payload.id } });
+            if (!admin) done(null, false);
+            done(null, admin);
+        } catch (err) {
+            done(err, false);
+        }
+    }
+);
+
 passport.use("jwt-user", userStrategy);
+passport.use("jwt-admin", adminStrategy);

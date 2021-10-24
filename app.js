@@ -3,6 +3,7 @@ require("./config/passport");
 const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
+const adminRoute = require("./routes/adminRoute");
 const userRoute = require("./routes/userRoute");
 const shippingAddressRoute = require("./routes/shippingAddressRoute");
 const paymentRoute = require("./routes/paymentRoute");
@@ -28,6 +29,7 @@ app.use(passport.initialize());
 app.use("/public", express.static("public"));
 
 //path
+app.use("admins", adminRoute);
 app.use("/users", userRoute);
 app.use("/shipping-addresses", shippingAddressRoute);
 app.use("/payments", paymentRoute);
