@@ -9,7 +9,7 @@ const {
 } = require("../controllers/pledgeController");
 const router = express.Router();
 
-router.get("/get-all", getAllPledge);
+router.get("/get-all", passport.authenticate("jwt-admin", { session: false }), getAllPledge);
 router.get(
     "/get-by-project-id/:projectId",
     passport.authenticate("jwt-user", { session: false }),
@@ -17,6 +17,6 @@ router.get(
 );
 router.get("/get-by-user-id", passport.authenticate("jwt-user", { session: false }), getPledgeByUserId);
 router.post("/create", passport.authenticate("jwt-user", { session: false }), createPledge);
-router.put("/update-status", updatePledgeStatus);
+router.put("/update-status", passport.authenticate("jwt-admin", { session: false }), updatePledgeStatus);
 
 module.exports = router;

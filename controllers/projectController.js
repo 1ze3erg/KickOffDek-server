@@ -146,6 +146,10 @@ async function updateProjectStatusByUser(req, res, next) {
         const { id } = req.params;
         const { status } = req.body;
 
+        if (!status || status.trim() === "") {
+            throw new CustomErr("status is required", 400);
+        }
+
         if (status !== "review") {
             throw new CustomErr(`user can't update to status ${status}`, 400);
         }
@@ -167,6 +171,10 @@ async function updateProjectStatusByAdmin(req, res, next) {
     try {
         const { id } = req.params;
         const { status } = req.body;
+
+        if (!status || status.trim() === "") {
+            throw new CustomErr("status is required", 400);
+        }
 
         if (status !== "draft" && status !== "live" && status !== "canceled") {
             throw new CustomErr(`admin can't update to status ${status}`, 400);
