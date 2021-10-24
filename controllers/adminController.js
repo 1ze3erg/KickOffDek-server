@@ -81,3 +81,5 @@ async function loginAdmin(req, res, next) {
         next(err);
     }
 }
+
+module.exports = { registerAdmin, loginAdmin };

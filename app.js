@@ -29,7 +29,7 @@ app.use(passport.initialize());
 app.use("/public", express.static("public"));
 
 //path
-app.use("admins", adminRoute);
+app.use("/admins", adminRoute);
 app.use("/users", userRoute);
 app.use("/shipping-addresses", shippingAddressRoute);
 app.use("/payments", paymentRoute);
