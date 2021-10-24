@@ -16,7 +16,7 @@ const userStrategy = new JwtStrategy(
 );
 
 const adminStrategy = new JwtStrategy(
-    { secretOrKey: process.env.TOKEN_KEY, jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() },
+    { secretOrKey: process.env.SECRET_KEY, jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() },
     async (payload, done) => {
         try {
             const admin = await Admin.findOne({ where: { id: payload.id } });

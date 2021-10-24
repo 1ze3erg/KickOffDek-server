@@ -111,7 +111,7 @@ async function loginUserWithEmail(req, res, next) {
             const payload = { id: findUser.id, username: findUser.username };
             const secretKey = process.env.TOKEN_KEY;
             const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
-            res.status(200).send({ msg: `${findUser.email} login success`, token });
+            res.status(200).send({ msg: `${findUser.email} login success`, token, role: "user" });
         } else {
             throw new CustomErr("email or password is incorrect", 400);
         }
@@ -153,7 +153,7 @@ async function loginUserWithGoogle(req, res, next) {
                     const payload = { id: findUser.id, username: findUser.username };
                     const secretKey = process.env.TOKEN_KEY;
                     const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
-                    return res.status(200).send({ msg: "login with google success", token });
+                    return res.status(200).send({ msg: "login with google success", token, role: "user" });
                 }
                 throw new CustomErr("can't login with google", 400);
             }
@@ -176,7 +176,7 @@ async function loginUserWithGoogle(req, res, next) {
         const secretKey = process.env.TOKEN_KEY;
         const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
 
-        res.status(201).send({ msg: `${newUser.email} has been create`, token });
+        res.status(201).send({ msg: `${newUser.email} has been create`, token, role: "user" });
     } catch (err) {
         next(err);
     }
