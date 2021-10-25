@@ -1,5 +1,4 @@
 const { Pledge, Reward, ShippingAddress, Payment } = require("../models");
-const { isDate } = require("validator");
 const CustomErr = require("../helpers/err");
 
 async function getAllPledge(req, res, next) {
@@ -46,7 +45,7 @@ async function createPledge(req, res, next) {
             throw new CustomErr("amount must be numeric", 400);
         }
 
-        if (!isDate(pledgeDate)) {
+        if (!new Date(pledgeDate).getTime()) {
             throw new CustomErr("pledgeDate must be datetime string", 400);
         }
 
@@ -119,4 +118,10 @@ async function updatePledgeStatus(req, res, next) {
     }
 }
 
-module.exports = { getAllPledge, getPledgeByProjectId, getPledgeByUserId, createPledge, updatePledgeStatus };
+module.exports = {
+    getAllPledge,
+    getPledgeByProjectId,
+    getPledgeByUserId,
+    createPledge,
+    updatePledgeStatus,
+};

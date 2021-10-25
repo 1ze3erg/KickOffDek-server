@@ -3,6 +3,7 @@ require("./config/passport");
 const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
+const socketio = require("socket.io");
 const adminRoute = require("./routes/adminRoute");
 const userRoute = require("./routes/userRoute");
 const shippingAddressRoute = require("./routes/shippingAddressRoute");
@@ -19,6 +20,8 @@ const pledgeRoute = require("./routes/pledgeRoute");
 const savedProjectRoute = require("./routes/savedProjectRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
+
+const { checkTotalPledgeAmount } = require("./events/pledgeEvent");
 
 const app = express();
 
@@ -52,6 +55,35 @@ app.use((req, res, next) => {
 // err handling
 app.use(errController);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`server is running on port ${port}...`);
 });
+
+const io = socketio(server, {
+    cors: {
+        origin: "*",
+    },
+});
+
+const wrap = (middleware) => (socket, next) => middleware(socket.request, {}, next);
+
+io.of("/users").use(wrap(passport.initialize()));
+io.of("/users").use(wrap(passport.authenticate("jwt-user", { session: false })));
+
+io.of("/users").on("connection", (socket) => {
+    console.log(`${socket.request.user.email} connect socket success`);
+
+    socket.on("check-total-pledge-amount", (pledgeObj, projectId) => {
+        checkTotalPledgeAmount(socket, pledgeObj, projectId);
+    });
+
+    socket.on("unmount", () => {
+        socket.disconnect(true);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("user is disconnected");
+    });
+});
+
+module.exports = server;
