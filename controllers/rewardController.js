@@ -1,5 +1,9 @@
-const CustomErr = require("../helpers/err");
 const { Reward, Project } = require("../models");
+const CustomErr = require("../helpers/err");
+const fs = require("fs");
+const util = require("util");
+const cloudinary = require("cloudinary").v2;
+const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
 async function getRewardByProjectId(req, res, next) {
     try {
@@ -46,7 +50,6 @@ async function updateReward(req, res, next) {
             projectId,
             title,
             description,
-            image,
             minPledge,
             limit,
             remaining,
@@ -74,11 +77,18 @@ async function updateReward(req, res, next) {
             throw new CustomErr("You are not creator of this project", 400);
         }
 
+        let result;
+        if (req.file) {
+            console.log(req.file);
+            result = await uploadPromise(req.file.path);
+            fs.unlinkSync(req.file.path);
+        }
+
         await Reward.update(
             {
                 title,
                 description,
-                image,
+                image: result?.secure_url,
                 minPledge,
                 limit,
                 remaining,

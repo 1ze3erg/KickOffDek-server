@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 const { isEmail, isStrongPassword } = require("validator");
 const CustomErr = require("../helpers/err");
+const fs = require("fs");
+const util = require("util");
+const cloudinary = require("cloudinary").v2;
+const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
 async function registerUser(req, res, next) {
     try {
@@ -163,7 +167,7 @@ async function loginUserWithGoogle(req, res, next) {
         const hashedGoogleId = await bcrypt.hash(googleId, 10);
 
         const newUser = await User.create({
-            avatar: imageUrl ?? `http://localhost:${process.env.PORT}/public/images/default-avatar.png`,
+            avatar: imageUrl ?? `http://localhost:${process.env.PORT || 8888}/public/images/default-avatar.png`,
             username: email,
             email,
             password: hashedGoogleId,
@@ -196,23 +200,19 @@ async function getUserById(req, res, next) {
 
 async function updateUser(req, res, next) {
     try {
-        const {
-            avatar,
-            username,
-            firstName,
-            lastName,
-            phoneNumber,
-            facebook,
-            instagram,
-            twitter,
-            website,
-            province,
-            country,
-        } = req.body;
+        const { username, firstName, lastName, phoneNumber, facebook, instagram, twitter, website, province, country } =
+            req.body;
+
+        let result;
+        if (req.file) {
+            console.log(req.file);
+            result = await uploadPromise(req.file.path);
+            fs.unlinkSync(req.file.path);
+        }
 
         await User.update(
             {
-                avatar,
+                avatar: result?.secure_url,
                 username,
                 firstName,
                 lastName,

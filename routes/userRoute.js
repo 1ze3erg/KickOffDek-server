@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("passport");
+const uploadImage = require("../config/upload");
 const {
     registerUser,
     checkUserEmail,
@@ -15,6 +16,11 @@ router.post("/register", registerUser);
 router.post("/check-user-email", checkUserEmail);
 router.post("/login-with-email", loginUserWithEmail);
 router.post("/login-with-google", loginUserWithGoogle);
-router.put("/update-user", passport.authenticate("jwt-user", { session: false }), updateUser);
+router.put(
+    "/update-user",
+    passport.authenticate("jwt-user", { session: false }),
+    uploadImage.single("user-avatar"),
+    updateUser
+);
 
 module.exports = router;

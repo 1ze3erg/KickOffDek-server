@@ -1,6 +1,10 @@
 const CustomErr = require("../helpers/err");
 const { Project, Category, Currency } = require("../models");
 const { isDate } = require("validator");
+const fs = require("fs");
+const util = require("util");
+const cloudinary = require("cloudinary").v2;
+const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
 async function getAllProject(req, res, next) {
     try {
@@ -72,8 +76,6 @@ async function updateProject(req, res, next) {
             instagram,
             twiiter,
             website,
-            coverImage,
-            campaignImage,
             campaignStory,
             pitchVideo,
             budgetOverview,
@@ -90,7 +92,7 @@ async function updateProject(req, res, next) {
         }
 
         if (target) {
-            if (isNaN(target)) {
+            if (isNaN(+target)) {
                 throw new CustomErr("target must be numeric", 400);
             }
         }
@@ -105,6 +107,18 @@ async function updateProject(req, res, next) {
             if (!isDate(endDate)) {
                 throw new CustomErr("endDate must be datetime string", 400);
             }
+        }
+
+        console.log(req.files);
+        let result1;
+        let result2;
+        if (req.files[0]) {
+            result1 = await uploadPromise(req.files[0].path);
+            fs.unlinkSync(req.files[0].path);
+        }
+        if (req.files[1]) {
+            result2 = await uploadPromise(req.files[1].path);
+            fs.unlinkSync(req.files[1].path);
         }
 
         await Project.update(
@@ -122,8 +136,8 @@ async function updateProject(req, res, next) {
                 instagram,
                 twiiter,
                 website,
-                coverImage,
-                campaignImage,
+                coverImage: result1?.secure_url,
+                campaignImage: result2?.secure_url,
                 pitchVideo,
                 campaignStory,
                 budgetOverview,
@@ -204,7 +218,7 @@ async function deleteProject(req, res, next) {
         }
 
         if (findProject.status !== "draft") {
-            throw new CustomErr("Your project can't be deleted", 400)
+            throw new CustomErr("Your project can't be deleted", 400);
         }
 
         await Project.destroy({ where: { id, creatorUserId: req.user.id } });
