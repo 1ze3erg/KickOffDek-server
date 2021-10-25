@@ -1,10 +1,10 @@
 const CustomErr = require("../helpers/err");
-const { Project, Category, Currency } = require("../models");
+const { Project, Category, Currency, Type } = require("../models");
 const { isDate } = require("validator");
 
 async function getAllProject(req, res, next) {
     try {
-        const projects = await Project.findAll();
+        const projects = await Project.findAll({ include: [Category, Currency, Type] });
         res.status(200).send(projects);
     } catch (err) {
         next(err);
@@ -204,7 +204,7 @@ async function deleteProject(req, res, next) {
         }
 
         if (findProject.status !== "draft") {
-            throw new CustomErr("Your project can't be deleted", 400)
+            throw new CustomErr("Your project can't be deleted", 400);
         }
 
         await Project.destroy({ where: { id, creatorUserId: req.user.id } });

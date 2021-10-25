@@ -12,7 +12,7 @@ const {
 } = require("../controllers/projectController");
 const router = express.Router();
 
-router.get("/get-all", passport.authenticate("jwt-admin", { session: false }), getAllProject);
+router.get("/get-all", getAllProject);
 router.get("/get-by-id/:id", getProjectById);
 router.get("/get-by-user-id", passport.authenticate("jwt-user", { session: false }), getProjectByCreatorUserId);
 router.post("/create", passport.authenticate("jwt-user", { session: false }), createProject);
