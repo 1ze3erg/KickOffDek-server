@@ -2,7 +2,7 @@ const { Pledge, ShippingAddress, Payment, Reward } = require("../models");
 const CustomErr = require("../helpers/err");
 
 async function checkTotalPledgeAmount(socket, pledgeObj, projectId) {
-    const { rewardId, shippingAddressId, paymentId, amount, pledgeDate } = pledgeObj;
+    const { rewardId, shippingAddressId, paymentId, amount, quantity, pledgeDate } = pledgeObj;
 
     Object.keys(pledgeObj).forEach((elem) => {
         if (!pledgeObj[elem]) {
@@ -18,10 +18,15 @@ async function checkTotalPledgeAmount(socket, pledgeObj, projectId) {
         throw new CustomErr("pledgeDate must be datetime string", 400);
     }
 
+    const findReward = await Reward.findOne({ where: { id: rewardId, projectId } });
     const findShippingAddress = await ShippingAddress.findOne({
         where: { id: shippingAddressId, userId: socket.request.user.id },
     });
     const findPayment = await Payment.findOne({ where: { id: paymentId, userId: socket.request.user.id } });
+
+    if (!findReward) {
+        throw new CustomErr("reward not found", 400);
+    }
 
     if (!findShippingAddress) {
         throw new CustomErr("shippingAddress not found", 400);
@@ -31,10 +36,8 @@ async function checkTotalPledgeAmount(socket, pledgeObj, projectId) {
         throw new CustomErr("payment not found", 400);
     }
 
-    const findReward = await Reward.findOne({ where: { id: rewardId, projectId } });
-
-    if (!findReward) {
-        throw new CustomErr("reward not found", 400);
+    if (findReward.maxQtyPerPledge < quantity) {
+        throw new CustomErr(`You can't pledge more than ${maxQtyPerPledge}`, 400);
     }
 
     const findPledges = await Pledge.findAll({ include: { model: Reward, where: { projectId } } });

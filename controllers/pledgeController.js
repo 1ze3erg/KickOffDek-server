@@ -53,7 +53,7 @@ async function createPledge(req, res, next) {
         if (!new Date(pledgeDate).getTime()) {
             throw new CustomErr("pledgeDate must be datetime string", 400);
         }
-        
+
         const findReward = await Reward.findOne({ where: { id: rewardId } });
         const findShippingAddress = await ShippingAddress.findOne({
             where: { id: shippingAddressId, userId: req.user.id },
@@ -70,6 +70,10 @@ async function createPledge(req, res, next) {
 
         if (!findPayment) {
             throw new CustomErr("payment not found", 400);
+        }
+
+        if (findReward.maxQtyPerPledge < quantity) {
+            throw new CustomErr(`You can't pledge more than ${maxQtyPerPledge}`, 400);
         }
 
         const newPledge = await Pledge.create({
