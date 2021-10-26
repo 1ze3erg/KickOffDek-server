@@ -64,21 +64,6 @@ async function updateReward(req, res, next) {
             throw new CustomErr("projectId is required", 400);
         }
 
-        const findReward = await Reward.findOne({ where: { id, projectId } });
-        const findProject = await Project.findOne({ where: { id: projectId } });
-
-        if (!findProject) {
-            throw new CustomErr("project does not exist", 400);
-        }
-
-        if (!findReward) {
-            throw new CustomErr("reward does not exist on this project", 400);
-        }
-
-        if (findProject?.creatorUserId !== req.user.id) {
-            throw new CustomErr("You are not creator of this project", 400);
-        }
-
         if (estDeliveryMonth) {
             if (estDeliveryMonth.length !== 3) {
                 throw new CustomErr("estDeliveryMonth must have 3 character", 400);
@@ -97,6 +82,19 @@ async function updateReward(req, res, next) {
             if (estDeliveryMonth < new Date().getFullYear()) {
                 throw new CustomErr("estDeliveryYear is passed", 400);
             }
+        }
+
+        const findReward = await Reward.findOne({
+            where: { id },
+            include: { model: Project, where: { projectId }, attributes: ["creatorUserId"] },
+        });
+
+        if (!findReward) {
+            throw new CustomErr("reward not found on this project", 400);
+        }
+
+        if (findReward.Project?.creatorUserId !== req.user.id) {
+            throw new CustomErr("You are not creator of this project", 400);
         }
 
         let result;
@@ -118,7 +116,7 @@ async function updateReward(req, res, next) {
                 estDeliveryMonth,
                 estDeliveryYear,
             },
-            { where: { id, projectId } }
+            { where: { id } }
         );
 
         res.status(200).send({ msg: "reward has been updated" });
@@ -133,7 +131,7 @@ async function deleteReward(req, res, next) {
 
         const findReward = await Reward.findOne({
             where: { id },
-            include: { model: Project, attribute: "createrUserId" },
+            include: { model: Project, attributes: ["creatorUserId"] },
         });
 
         if (!findReward) {
