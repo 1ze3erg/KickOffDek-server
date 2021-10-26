@@ -26,7 +26,7 @@ async function createComment(req, res, next) {
         const findProject = await Project.findOne({ where: { id: projectId } });
 
         if (!findProject) {
-            throw new CustomErr("project does not exist", 400);
+            throw new CustomErr("project not found", 400);
         }
 
         const newComment = await Comment.create({
@@ -46,13 +46,13 @@ async function updateComment(req, res, next) {
         const { id } = req.params;
         const { message } = req.body;
 
-        if (!message || message.trim() === "") {
-            throw new CustomErr("message is required", 400);
-        }
-
-        const findComment = await Comment.findOne({ where: { id, userId: req.user.id } });
+        const findComment = await Comment.findOne({ where: { id } });
 
         if (!findComment) {
+            throw new CustomErr("comment not dound", 400);
+        }
+        
+        if (findComment.userId !== req.user.id) {
             throw new CustomErr("You can't update this comment", 400);
         }
 
@@ -75,9 +75,13 @@ async function deleteComment(req, res, next) {
     try {
         const { id } = req.params;
 
-        const findComment = await Comment.findOne({ where: { id, userId: req.user.id } });
+        const findComment = await Comment.findOne({ where: { id } });
 
         if (!findComment) {
+            throw new CustomErr("comment not dound", 400);
+        }
+        
+        if (findComment.userId !== req.user.id) {
             throw new CustomErr("You can't delete this comment", 400);
         }
 

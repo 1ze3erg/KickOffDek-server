@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     isNumeric: true,
-                    isLengthThree(value) {
+                    isLength(value) {
                         if (value.length !== 16) {
                             throw new CustomErr("cardNumber must have 16 character", 400);
                         }
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     isNumeric: true,
-                    isLengthThree(value) {
+                    isLength(value) {
                         if (value.length !== 6) {
                             throw new CustomErr("expiration must have 6 character", 400);
                         }

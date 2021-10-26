@@ -35,18 +35,16 @@ async function updateCurrency(req, res, next) {
         const { id } = req.params;
         const { name } = req.body;
 
+        if (name) {
+            if (name.length !== 3) {
+                throw new CustomErr("name must have 3 character", 400);
+            }
+        }
+        
         const findCurrency = await Currency.findOne({ where: { id } });
 
         if (!findCurrency) {
             throw new CustomErr("currency not found", 400);
-        }
-
-        if (!name || name.trim() === "") {
-            throw new CustomErr("name is required", 400);
-        }
-
-        if (name.length !== 3) {
-            throw new CustomErr("name must have 3 character", 400);
         }
 
         await Currency.update({ name: name.toUpperCase() }, { where: { id } });

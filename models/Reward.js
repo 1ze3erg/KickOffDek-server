@@ -23,7 +23,16 @@ module.exports = (sequelize, DataTypes) => {
                 min: 0
             }
         },
-        estDeliveryMonth: DataTypes.STRING,
+        estDeliveryMonth: {
+            type: DataTypes.STRING(3),
+            validate: {
+                isLength(value) {
+                    if (value.length !== 3) {
+                        throw new CustomErr("cardNumber must have 3 character", 400);
+                    }
+                },
+            }
+        },
         estDeliveryYear: DataTypes.STRING,
     }, {
         tableName: "rewards",

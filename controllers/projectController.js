@@ -18,7 +18,7 @@ async function getAllProject(req, res, next) {
 async function getProjectById(req, res, next) {
     try {
         const { id } = req.params;
-        const project = await Project.findOne({ where: { id } });
+        const project = await Project.findOne({ where: { id }, include: [Category, Currency, Type] });
         res.status(200).send(project);
     } catch (err) {
         next(err);
@@ -27,7 +27,10 @@ async function getProjectById(req, res, next) {
 
 async function getProjectByCreatorUserId(req, res, next) {
     try {
-        const projects = await Project.findAll({ where: { creatorUserId: req.user.id } });
+        const projects = await Project.findAll({
+            where: { creatorUserId: req.user.id },
+            include: [Category, Currency, Type],
+        });
         res.status(200).send(projects);
     } catch (err) {
         next(err);
@@ -85,12 +88,6 @@ async function updateProject(req, res, next) {
             currencyId,
         } = req.body;
 
-        const findProject = await Project.findOne({ where: { id, creatorUserId: req.user.id } });
-
-        if (!findProject) {
-            throw new CustomErr("project not found", 400);
-        }
-
         if (target) {
             if (isNaN(+target)) {
                 throw new CustomErr("target must be numeric", 400);
@@ -98,15 +95,25 @@ async function updateProject(req, res, next) {
         }
 
         if (startDate) {
-            if (!isDate(startDate)) {
+            if (!new Date(startDate).getTime()) {
                 throw new CustomErr("startDate must be datetime string", 400);
             }
         }
 
         if (endDate) {
-            if (!isDate(endDate)) {
+            if (!new Date(endDate).getTime()) {
                 throw new CustomErr("endDate must be datetime string", 400);
             }
+        }
+
+        const findProject = await Project.findOne({ where: { id } });
+
+        if (!findProject) {
+            throw new CustomErr("project not found", 400);
+        }
+
+        if (findProject.creatorUserId !== req.user.id) {
+            throw new CustomErr("You are not creator of this project", 400);
         }
 
         console.log(req.files);
@@ -168,6 +175,16 @@ async function updateProjectStatusByUser(req, res, next) {
             throw new CustomErr(`user can't update to status ${status}`, 400);
         }
 
+        const findProject = await Project.findOne({ where: { id } });
+
+        if (!findProject) {
+            throw new CustomErr("project not found", 400);
+        }
+
+        if (findProject.creatorUserId !== req.user.id) {
+            throw new CustomErr("You are not creator of this project", 400);
+        }
+
         await Project.update(
             {
                 status,
@@ -194,6 +211,12 @@ async function updateProjectStatusByAdmin(req, res, next) {
             throw new CustomErr(`admin can't update to status ${status}`, 400);
         }
 
+        const findProject = await Project.findOne({ where: { id } });
+
+        if (!findProject) {
+            throw new CustomErr("project not found", 400);
+        }
+
         await Project.update(
             {
                 status,
@@ -218,7 +241,7 @@ async function deleteProject(req, res, next) {
         }
 
         if (findProject.status !== "draft") {
-            throw new CustomErr("Your project can't be deleted", 400);
+            throw new CustomErr("You are not creator of this project", 400);
         }
 
         await Project.destroy({ where: { id, creatorUserId: req.user.id } });

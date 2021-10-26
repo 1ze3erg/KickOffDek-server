@@ -49,8 +49,8 @@ async function createPayment(req, res, next) {
             throw new CustomErr("expiration month is invalid", 400);
         }
 
-        if (expiration.slice(2) < new Date().getFullYear()) {
-            throw new CustomErr("expiration year is invalid", 400);
+        if (expiration.slice(0, 2) - 1 < new Date().getMonth() || expiration.slice(2) < new Date().getFullYear()) {
+            throw new CustomErr("expiration month or year is passed", 400);
         }
 
         const newPayment = await Payment.create({
@@ -72,12 +72,6 @@ async function updatePayment(req, res, next) {
     try {
         const { id } = req.params;
         const { paymentName, cardProvider, cardNumber, cardHolderName, expiration } = req.body;
-
-        const findPayment = await Payment.findOne({ where: { id, userId: req.user.id } });
-
-        if (!findPayment) {
-            throw new CustomErr("payment not found", 400);
-        }
 
         if (cardProvider) {
             if (cardProvider !== "VISA" && cardProvider !== "MASTER") {
@@ -108,33 +102,47 @@ async function updatePayment(req, res, next) {
                 throw new CustomErr("expiration month is invalid", 400);
             }
 
-            if (expiration.slice(0, 2) -1 < new Date().getMonth() || expiration.slice(2) < new Date().getFullYear()) {
+            if (expiration.slice(0, 2) - 1 < new Date().getMonth() || expiration.slice(2) < new Date().getFullYear()) {
                 throw new CustomErr("expiration month or year is passed", 400);
             }
         }
 
-        await Payment.update(
-            { paymentName, cardProvider, cardNumber, cardHolderName, expiration },
-            { where: { id, userId: req.user.id } }
-        );
-
-        res.status(200).send({ msg: "payment has been updated" });
-    } catch (err) {
-        next(err);
-    }
-}
-
-async function deletePayment(req, res, next) {
-    try {
-        const { id } = req.params;
-
-        const findPayment = await Payment.findOne({ where: { id, userId: req.user.id } });
+        const findPayment = await Payment.findOne({ where: { id } });
 
         if (!findPayment) {
             throw new CustomErr("payment not found", 400);
         }
 
-        await Payment.destroy({ where: { id, userId: req.user.id } });
+        if (findPayment.userId !== req.user.id) {
+            throw new CustomErr("You can't update this payment");
+        }
+        
+        await Payment.update(
+            { paymentName, cardProvider, cardNumber, cardHolderName, expiration },
+            { where: { id } }
+            );
+            
+            res.status(200).send({ msg: "payment has been updated" });
+        } catch (err) {
+            next(err);
+        }
+    }
+    
+    async function deletePayment(req, res, next) {
+        try {
+        const { id } = req.params;
+        
+        const findPayment = await Payment.findOne({ where: { id } });
+        
+        if (!findPayment) {
+            throw new CustomErr("payment not found", 400);
+        }
+
+        if (findPayment.userId !== req.user.id) {
+            throw new CustomErr("You can't delete this payment");
+        }
+
+        await Payment.destroy({ where: { id } });
 
         res.status(204).send();
     } catch (err) {

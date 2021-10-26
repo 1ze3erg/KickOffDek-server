@@ -69,7 +69,7 @@ async function loginAdmin(req, res, next) {
             isCorrectPassword = await bcrypt.compare(password, findAdmin.password);
         }
 
-        if (findAdmin && isStrongPassword) {
+        if (findAdmin && isCorrectPassword) {
             const payload = { id: findAdmin.id, username: findAdmin.username };
             const secretKey = process.env.SECRET_KEY;
             const token = jwt.sign(payload, secretKey, { expiresIn: "3d" });

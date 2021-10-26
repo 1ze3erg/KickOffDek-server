@@ -79,11 +79,10 @@ async function checkUserEmail(req, res, next) {
             if (findUser.loginWith === "google") {
                 throw new CustomErr("You already have account by google", 400);
             }
+            res.status(200).send({ msg: "Let's go to sign in", haveAccount: true });
         } else {
-            throw new CustomErr("You don't have any account", 400);
+            res.status(200).send({ msg: "You don't have any account", haveAccount: false });
         }
-
-        res.status(200).send({ msg: "Let's go to sign in" });
     } catch (err) {
         next(err);
     }
