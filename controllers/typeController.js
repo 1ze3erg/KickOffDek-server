@@ -37,10 +37,6 @@ async function updateType(req, res, next) {
             throw new CustomErr("type not found", 400);
         }
 
-        if (!name || name.trim() === "") {
-            throw new CustomErr("name is required", 400);
-        }
-
         await Type.update({ name }, { where: { id } });
 
         res.status(200).send({ msg: "type has been updated" });
