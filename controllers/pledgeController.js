@@ -32,9 +32,9 @@ async function getPledgeByUserId(req, res, next) {
 
 async function createPledge(req, res, next) {
     try {
-        const { rewardId, shippingAddressId, paymentId, amount, pledgeDate } = req.body;
+        const { rewardId, shippingAddressId, paymentId, amount, quantity, pledgeDate } = req.body;
 
-        const obj = { rewardId, shippingAddressId, paymentId, amount, pledgeDate };
+        const obj = { rewardId, shippingAddressId, paymentId, amount, quantity, pledgeDate };
 
         Object.keys(obj).forEach((elem) => {
             if (!obj[elem]) {
@@ -44,6 +44,10 @@ async function createPledge(req, res, next) {
 
         if (isNaN(amount)) {
             throw new CustomErr("amount must be numeric", 400);
+        }
+
+        if (isNaN(quantity)) {
+            throw new CustomErr("quantity must be numeric", 400);
         }
 
         if (!new Date(pledgeDate).getTime()) {
@@ -74,6 +78,7 @@ async function createPledge(req, res, next) {
             shippingAddressId,
             paymentId,
             amount,
+            quantity,
             pledgeDate,
             status: "not charged",
         });

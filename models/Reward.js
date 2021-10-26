@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         description: DataTypes.TEXT,
         image: DataTypes.STRING,
         minPledge: DataTypes.DECIMAL(10, 2),
+        maxQtyPerPledge: DataTypes.INTEGER,
         limit: {
             type: DataTypes.INTEGER,
             validate: {
