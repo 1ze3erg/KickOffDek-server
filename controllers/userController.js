@@ -6,6 +6,7 @@ const CustomErr = require("../helpers/err");
 const fs = require("fs");
 const util = require("util");
 const cloudinary = require("cloudinary").v2;
+const { registerEmail } = require("../config/nodemailer");
 const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
 async function registerUser(req, res, next) {
@@ -59,6 +60,8 @@ async function registerUser(req, res, next) {
             password: hashedPassword,
             loginWith: "email",
         });
+
+        registerEmail(email);
 
         res.status(201).send({ msg: `${newUser.email} has been created` });
     } catch (err) {
