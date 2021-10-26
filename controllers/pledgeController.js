@@ -1,5 +1,4 @@
 const { Pledge, Reward, ShippingAddress, Payment } = require("../models");
-const { isDate } = require("validator");
 const CustomErr = require("../helpers/err");
 
 async function getAllPledge(req, res, next) {
@@ -46,14 +45,19 @@ async function createPledge(req, res, next) {
             throw new CustomErr("amount must be numeric", 400);
         }
 
-        if (!isDate(pledgeDate)) {
+        if (!new Date(pledgeDate).getTime()) {
             throw new CustomErr("pledgeDate must be datetime string", 400);
         }
-
+        
+        const findReward = await Reward.findOne({ where: { id: rewardId } });
         const findShippingAddress = await ShippingAddress.findOne({
             where: { id: shippingAddressId, userId: req.user.id },
         });
         const findPayment = await Payment.findOne({ where: { id: paymentId, userId: req.user.id } });
+
+        if (!findReward) {
+            throw new CustomErr("reward not found", 400);
+        }
 
         if (!findShippingAddress) {
             throw new CustomErr("shippingAddress not found", 400);
@@ -61,12 +65,6 @@ async function createPledge(req, res, next) {
 
         if (!findPayment) {
             throw new CustomErr("payment not found", 400);
-        }
-
-        const findReward = await Reward.findOne({ where: { id: rewardId } });
-
-        if (!findReward) {
-            throw new CustomErr("reward not found", 400);
         }
 
         const newPledge = await Pledge.create({
@@ -101,14 +99,14 @@ async function updatePledgeStatus(req, res, next) {
             throw new CustomErr("status is required", 400);
         }
 
+        if (status !== "canceled") {
+            throw new CustomErr(`admin can't update to status ${status}`, 400);
+        }
+
         const findPledge = await Pledge.findOne({ where: { userId, rewardId } });
 
         if (!findPledge) {
             throw new CustomErr("pledge not found", 400);
-        }
-
-        if (status !== "canceled") {
-            throw new CustomErr(`admin can't update to status ${status}`, 400);
         }
 
         await Pledge.update({ status }, { where: { userId, rewardId } });
