@@ -1,5 +1,6 @@
 const { Pledge, Reward, ShippingAddress, Payment } = require("../models");
 const CustomErr = require("../helpers/err");
+const { pledgeEmail } = require("../config/nodemailer");
 
 async function getAllPledge(req, res, next) {
     try {
@@ -77,6 +78,8 @@ async function createPledge(req, res, next) {
             pledgeDate,
             status: "not charged",
         });
+
+        pledgeEmail(req.user.email);
 
         res.status(201).send(newPledge);
     } catch (err) {
