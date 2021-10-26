@@ -13,7 +13,7 @@ async function getSavedProjectByUserId(req, res, next) {
 async function getSavedProject(req, res, next) {
     try {
         const { projectId } = req.params;
-        const savedProject = await SavedProject.findAll({ where: { userId: req.user.id, projectId } });
+        const savedProject = await SavedProject.findOne({ where: { userId: req.user.id, projectId } });
         res.status(200).send(savedProject);
     } catch (err) {
         next(err);

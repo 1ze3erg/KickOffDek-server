@@ -5,7 +5,7 @@ const {
     getSavedProject,
     createSavedProject,
     deleteSavedProject,
-} = require("../controllers/savedProjectRoute");
+} = require("../controllers/savedProjectController");
 const router = express.Router();
 
 router.get("/get-by-user-id", passport.authenticate("jwt-user", { session: false }), getSavedProjectByUserId);
