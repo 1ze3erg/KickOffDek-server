@@ -22,7 +22,7 @@ const savedProjectRoute = require("./routes/savedProjectRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
-const { checkTotalPledgeAmount } = require("./events/pledgeEvent");
+const { checkTotalPledgeAmount, changeProjectStatus } = require("./events/pledgeEvent");
 
 const app = express();
 
@@ -75,8 +75,11 @@ io.of("/users").use(wrap(passport.authenticate("jwt-user", { session: false })))
 io.of("/users").on("connection", (socket) => {
     console.log(`${socket.request.user.email} connect socket success`);
 
-    socket.on("check-total-pledge-amount", (pledgeObj, projectId) => {
-        checkTotalPledgeAmount(socket, pledgeObj, projectId);
+    socket.on("check-total-pledge-amount", async (pledgeObj, projectId) => {
+        const newTotalPledgeAmount = await checkTotalPledgeAmount(socket, pledgeObj, projectId);
+        socket.emit("return-pledge-amount", newTotalPledgeAmount);
+        const newStatus = await changeProjectStatus(newTotalPledgeAmount, projectId);
+        socket.emit("return-project-status", newStatus);
     });
 
     socket.on("unmount", () => {
