@@ -48,6 +48,15 @@ module.exports = (sequelize, DataTypes) => {
             onFaq: "RESTRICT",
             onDelete: "RESTRICT",
         });
+
+        Reward.hasMany(models.Shipping, {
+            foreignKey: {
+                name: "rewardId",
+                allowNull: false,
+            },
+            onFaq: "RESTRICT",
+            onDelete: "RESTRICT",
+        });
     }
 
     return Reward;
