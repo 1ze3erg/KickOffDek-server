@@ -16,6 +16,7 @@ const rewardRoute = require("./routes/rewardRoute");
 const commentRoute = require("./routes/commentRoute");
 const updateRoute = require("./routes/updateRoute");
 const faqRoute = require("./routes/faqRoute");
+const shippingRoute = require("./routes/shippingRoute");
 const pledgeRoute = require("./routes/pledgeRoute");
 const savedProjectRoute = require("./routes/savedProjectRoute");
 const errController = require("./controllers/errController");
@@ -44,6 +45,7 @@ app.use("/rewards", rewardRoute);
 app.use("/comments", commentRoute);
 app.use("/updates", updateRoute);
 app.use("/faqs", faqRoute);
+app.use("/shippings", shippingRoute);
 app.use("/pledges", pledgeRoute);
 app.use("/savedProjects", savedProjectRoute);
 
