@@ -5,6 +5,8 @@ const util = require("util");
 const cloudinary = require("cloudinary").v2;
 const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
+const monthArr = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
 async function getRewardByProjectId(req, res, next) {
     try {
         const { projectId } = req.params;
@@ -75,6 +77,26 @@ async function updateReward(req, res, next) {
 
         if (findProject?.creatorUserId !== req.user.id) {
             throw new CustomErr("You are not creator of this project", 400);
+        }
+
+        if (estDeliveryMonth) {
+            if (estDeliveryMonth.length !== 3) {
+                throw new CustomErr("estDeliveryMonth must have 3 character", 400);
+            }
+
+            if (monthArr.includes(estDeliveryMonth)) {
+                throw new CustomErr("estDeliveryMonth is invalid", 400);
+            }
+
+            if (monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()) {
+                throw new CustomErr("estDeliveryMonth is passed", 400);
+            }
+        }
+
+        if (estDeliveryYear) {
+            if (estDeliveryMonth < new Date().getFullYear()) {
+                throw new CustomErr("estDeliveryYear is passed", 400);
+            }
         }
 
         let result;
