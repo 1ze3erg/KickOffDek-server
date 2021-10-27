@@ -55,19 +55,4 @@ async function checkTotalPledgeAmount(socket, pledgeObj, projectId) {
     }
 }
 
-async function changeProjectStatus(newTotalPledge, projectId) {
-    try {
-        const findProject = await Project.findOne({ where: { id: projectId } });
-
-        if (newTotalPledge >= findProject.target) {
-            await Project.update({ status: "successful" }, { where: { id: projectId } });
-            return "successful";
-        } else {
-            return findProject.status;
-        }
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-module.exports = { checkTotalPledgeAmount, changeProjectStatus };
+module.exports = { checkTotalPledgeAmount };

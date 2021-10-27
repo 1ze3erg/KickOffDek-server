@@ -78,8 +78,6 @@ io.of("/users").on("connection", (socket) => {
     socket.on("check-total-pledge-amount", async (pledgeObj, projectId) => {
         const newTotalPledgeAmount = await checkTotalPledgeAmount(socket, pledgeObj, projectId);
         socket.emit("return-pledge-amount", newTotalPledgeAmount);
-        const newStatus = await changeProjectStatus(newTotalPledgeAmount, projectId);
-        socket.emit("return-project-status", newStatus);
     });
 
     socket.on("unmount", () => {
