@@ -73,7 +73,7 @@ async function createPledge(req, res, next) {
         }
 
         if (findReward.maxQtyPerPledge < quantity) {
-            throw new CustomErr(`You can't pledge more than ${maxQtyPerPledge}`, 400);
+            throw new CustomErr(`You can't pledge more than ${findReward.maxQtyPerPledge}`, 400);
         }
 
         const newPledge = await Pledge.create({
