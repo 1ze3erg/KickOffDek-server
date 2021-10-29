@@ -70,7 +70,7 @@ async function updateReward(req, res, next) {
                 throw new CustomErr("estDeliveryMonth must have 3 character", 400);
             }
 
-            if (monthArr.includes(estDeliveryMonth)) {
+            if (!monthArr.includes(estDeliveryMonth)) {
                 throw new CustomErr("estDeliveryMonth is invalid", 400);
             }
 
