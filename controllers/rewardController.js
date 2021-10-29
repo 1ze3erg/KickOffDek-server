@@ -87,7 +87,7 @@ async function updateReward(req, res, next) {
 
         const findReward = await Reward.findOne({
             where: { id },
-            include: { model: Project, where: { projectId }, attributes: ["creatorUserId"] },
+            include: { model: Project, where: { id: projectId }, attributes: ["creatorUserId"] },
         });
 
         if (!findReward) {
