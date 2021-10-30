@@ -16,10 +16,15 @@ const router = express.Router();
 router.get("/get-all", getAllProject);
 router.get("/get-by-id/:id", getProjectById);
 router.get("/get-by-user-id", passport.authenticate("jwt-user", { session: false }), getProjectByCreatorUserId);
-router.post("/create", passport.authenticate("jwt-user", { session: false }), createProject);
+router.post(
+    "/create",
+    passport.authenticate("jwt-user", { session: false }),
+    uploadImage.array("project-image", 2),
+    createProject
+);
 router.put(
     "/update/:id",
-    passport.authenticate("jwt-user",  { session: false }),
+    passport.authenticate("jwt-user", { session: false }),
     uploadImage.array("project-image", 2),
     updateProject
 );
