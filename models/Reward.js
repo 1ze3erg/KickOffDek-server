@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         title: DataTypes.STRING,
         description: DataTypes.TEXT,
         image: DataTypes.STRING,
-        minPledge: DataTypes.DECIMAL(10, 2),
+        minAmount: DataTypes.DECIMAL(10, 2),
         maxQtyPerPledge: DataTypes.INTEGER,
         limit: {
             type: DataTypes.INTEGER,
@@ -29,12 +29,21 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isLength(value) {
                     if (value.length !== 3) {
-                        throw new CustomErr("cardNumber must have 3 character", 400);
+                        throw new CustomErr("estDeliveryMonth must have 3 character", 400);
                     }
                 },
             }
         },
-        estDeliveryYear: DataTypes.STRING,
+        estDeliveryYear: {
+            type: DataTypes.STRING(4),
+            validate: {
+                isLength(value) {
+                    if (value.length !== 4) {
+                        throw new CustomErr("estDeliveryYear must have 4 character", 400);
+                    }
+                },
+            }
+        }
     }, {
         tableName: "rewards",
         underscored: true

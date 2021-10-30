@@ -19,16 +19,65 @@ async function getRewardByProjectId(req, res, next) {
 
 async function createReward(req, res, next) {
     try {
-        const { projectId } = req.body;
+        const {
+            projectId,
+            title,
+            description,
+            image,
+            minAmount,
+            maxQtyPerPledge,
+            limit,
+            estDeliveryMonth,
+            estDeliveryYear,
+        } = req.body;
 
         if (!projectId) {
             throw new CustomErr("projectId is required", 400);
         }
 
+        if (!title || title.trim() === "") {
+            throw new CustomErr("title is required", 400);
+        }
+
+        if (!description || description.trim() === "") {
+            throw new CustomErr("description is required", 400);
+        }
+
+        if (!minAmount) {
+            throw new CustomErr("minAmount is required", 400);
+        }
+
+        if (minAmount < 1) {
+            throw new CustomErr("minAmount must more than 1", 400);
+        }
+
+        if (!estDeliveryMonth) {
+            throw new CustomErr("estDeliveryMonth is required", 400);
+        }
+
+        if (estDeliveryMonth.length !== 3) {
+            throw new CustomErr("estDeliveryMonth must have 3 character", 400);
+        }
+
+        if (!monthArr.includes(estDeliveryMonth)) {
+            throw new CustomErr("estDeliveryMonth is invalid", 400);
+        }
+
+        if (!estDeliveryYear) {
+            throw new CustomErr("estDeliveryYear is required", 400);
+        }
+
+        if (
+            estDeliveryYear < new Date().getFullYear() ||
+            monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
+        ) {
+            throw new CustomErr("estDelivery is passed", 400);
+        }
+
         const findProject = await Project.findOne({ where: { id: projectId } });
 
         if (!findProject) {
-            throw new CustomErr("project does not exist", 400);
+            throw new CustomErr("project not found", 400);
         }
 
         if (findProject?.creatorUserId !== req.user.id) {
@@ -37,6 +86,15 @@ async function createReward(req, res, next) {
 
         const newReward = await Reward.create({
             projectId,
+            title,
+            description,
+            image,
+            minAmount,
+            maxQtyPerPledge,
+            limit,
+            remaining: limit,
+            estDeliveryMonth,
+            estDeliveryYear,
         });
 
         res.status(201).send(newReward);
@@ -53,7 +111,7 @@ async function updateReward(req, res, next) {
             title,
             description,
             image,
-            minPledge,
+            minAmount,
             maxQtyPerPledge,
             limit,
             remaining,
@@ -74,15 +132,14 @@ async function updateReward(req, res, next) {
             if (!monthArr.includes(estDeliveryMonth)) {
                 throw new CustomErr("estDeliveryMonth is invalid", 400);
             }
-
-            if (monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()) {
-                throw new CustomErr("estDeliveryMonth is passed", 400);
-            }
         }
 
         if (estDeliveryYear) {
-            if (estDeliveryMonth < new Date().getFullYear()) {
-                throw new CustomErr("estDeliveryYear is passed", 400);
+            if (
+                estDeliveryMonth < new Date().getFullYear() ||
+                monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
+            ) {
+                throw new CustomErr("estDelivery is passed", 400);
             }
         }
 
@@ -104,7 +161,7 @@ async function updateReward(req, res, next) {
                 title,
                 description,
                 image,
-                minPledge,
+                minAmount,
                 maxQtyPerPledge,
                 limit,
                 remaining,
