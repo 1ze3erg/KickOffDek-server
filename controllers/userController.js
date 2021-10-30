@@ -202,8 +202,20 @@ async function getUserById(req, res, next) {
 
 async function updateUser(req, res, next) {
     try {
-        const { username, firstName, lastName, phoneNumber, facebook, instagram, twitter, website, province, country } =
-            req.body;
+        const {
+            username,
+            firstName,
+            lastName,
+            phoneNumber,
+            facebook,
+            instagram,
+            twitter,
+            website,
+            biography,
+            tagline,
+            province,
+            country,
+        } = req.body;
 
         let result;
         if (req.file) {
@@ -223,6 +235,8 @@ async function updateUser(req, res, next) {
                 instagram,
                 twitter,
                 website,
+                biography,
+                tagline,
                 province,
                 country,
             },
