@@ -19,10 +19,11 @@ const faqRoute = require("./routes/faqRoute");
 const shippingRoute = require("./routes/shippingRoute");
 const pledgeRoute = require("./routes/pledgeRoute");
 const savedProjectRoute = require("./routes/savedProjectRoute");
+const uploadRoute = require("./routes/uploadRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
-const { checkTotalPledgeAmount, changeProjectStatus } = require("./events/pledgeEvent");
+const { checkTotalPledgeAmount } = require("./events/pledgeEvent");
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use("/faqs", faqRoute);
 app.use("/shippings", shippingRoute);
 app.use("/pledges", pledgeRoute);
 app.use("/savedProjects", savedProjectRoute);
+app.use("/uploads", uploadRoute);
 
 // 404 not found
 app.use((req, res, next) => {

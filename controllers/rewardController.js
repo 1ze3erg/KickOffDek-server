@@ -52,6 +52,7 @@ async function updateReward(req, res, next) {
             projectId,
             title,
             description,
+            image,
             minPledge,
             maxQtyPerPledge,
             limit,
@@ -98,18 +99,11 @@ async function updateReward(req, res, next) {
             throw new CustomErr("You are not creator of this project", 400);
         }
 
-        let result;
-        if (req.file) {
-            console.log(req.file);
-            result = await uploadPromise(req.file.path);
-            fs.unlinkSync(req.file.path);
-        }
-
         await Reward.update(
             {
                 title,
                 description,
-                image: result?.secure_url,
+                image,
                 minPledge,
                 maxQtyPerPledge,
                 limit,

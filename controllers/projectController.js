@@ -1,9 +1,5 @@
 const CustomErr = require("../helpers/err");
 const { Project, Category, Currency, Type } = require("../models");
-const fs = require("fs");
-const util = require("util");
-const cloudinary = require("cloudinary").v2;
-const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
 async function getAllProject(req, res, next) {
     try {
@@ -46,18 +42,6 @@ async function createProject(req, res, next) {
 
         const category = await Category.findAll();
 
-        console.log(req.files);
-        let result1;
-        let result2;
-        if (req.files[0]) {
-            result1 = await uploadPromise(req.files[0].path);
-            fs.unlinkSync(req.files[0].path);
-        }
-        if (req.files[1]) {
-            result2 = await uploadPromise(req.files[1].path);
-            fs.unlinkSync(req.files[1].path);
-        }
-
         const newProject = await Project.create({
             typeId,
             categoryId: category[0].id,
@@ -67,8 +51,8 @@ async function createProject(req, res, next) {
             status: "draft",
             target,
             endDate,
-            coverImage: result1?.secure_url,
-            campaignImage: result2?.secure_url,
+            coverImage,
+            campaignImage,
         });
 
         res.status(201).send(newProject);
@@ -94,6 +78,8 @@ async function updateProject(req, res, next) {
             instagram,
             twitter,
             website,
+            coverImage, 
+            campaignImage,
             campaignStory,
             pitchVideo,
             budgetOverview,
@@ -131,18 +117,6 @@ async function updateProject(req, res, next) {
             throw new CustomErr("You are not creator of this project", 400);
         }
 
-        console.log(req.files);
-        let result1;
-        let result2;
-        if (req.files[0]) {
-            result1 = await uploadPromise(req.files[0].path);
-            fs.unlinkSync(req.files[0].path);
-        }
-        if (req.files[1]) {
-            result2 = await uploadPromise(req.files[1].path);
-            fs.unlinkSync(req.files[1].path);
-        }
-
         await Project.update(
             {
                 title,
@@ -158,8 +132,8 @@ async function updateProject(req, res, next) {
                 instagram,
                 twitter,
                 website,
-                coverImage: result1?.secure_url,
-                campaignImage: result2?.secure_url,
+                coverImage,
+                campaignImage,
                 pitchVideo,
                 campaignStory,
                 budgetOverview,

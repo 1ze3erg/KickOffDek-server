@@ -203,6 +203,7 @@ async function getUserById(req, res, next) {
 async function updateUser(req, res, next) {
     try {
         const {
+            avatar,
             username,
             firstName,
             lastName,
@@ -217,16 +218,9 @@ async function updateUser(req, res, next) {
             country,
         } = req.body;
 
-        let result;
-        if (req.file) {
-            console.log(req.file);
-            result = await uploadPromise(req.file.path);
-            fs.unlinkSync(req.file.path);
-        }
-
         await User.update(
             {
-                avatar: result?.secure_url,
+                avatar,
                 username,
                 firstName,
                 lastName,

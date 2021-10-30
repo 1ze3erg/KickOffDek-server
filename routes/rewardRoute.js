@@ -6,12 +6,7 @@ const router = express.Router();
 
 router.get("/get-by-project-id/:projectId", getRewardByProjectId);
 router.post("/create", passport.authenticate("jwt-user", { session: false }), createReward);
-router.put(
-    "/update/:id",
-    passport.authenticate("jwt-user", { session: false }),
-    uploadImage.single("reward-image"),
-    updateReward
-);
+router.put("/update/:id", passport.authenticate("jwt-user", { session: false }), updateReward);
 router.delete("/delete/:id", passport.authenticate("jwt-user", { session: false }), deleteReward);
 
 module.exports = router;
