@@ -1,6 +1,5 @@
 const CustomErr = require("../helpers/err");
 const { Project, Category, Currency, Type } = require("../models");
-const { isDate } = require("validator");
 const fs = require("fs");
 const util = require("util");
 const cloudinary = require("cloudinary").v2;
@@ -39,21 +38,37 @@ async function getProjectByCreatorUserId(req, res, next) {
 
 async function createProject(req, res, next) {
     try {
-        const { typeId } = req.body;
+        const { typeId, currencyId, title, target, endDate, coverImage, campaignImage } = req.body;
 
         if (!typeId) {
             throw new CustomErr("typeId is required", 400);
         }
 
         const category = await Category.findAll();
-        const currency = await Currency.findAll();
+
+        console.log(req.files);
+        let result1;
+        let result2;
+        if (req.files[0]) {
+            result1 = await uploadPromise(req.files[0].path);
+            fs.unlinkSync(req.files[0].path);
+        }
+        if (req.files[1]) {
+            result2 = await uploadPromise(req.files[1].path);
+            fs.unlinkSync(req.files[1].path);
+        }
 
         const newProject = await Project.create({
             typeId,
             categoryId: category[0].id,
-            currencyId: currency[0].id,
+            currencyId: currencyId,
             creatorUserId: req.user.id,
+            title,
             status: "draft",
+            target,
+            endDate,
+            coverImage: result1?.secure_url,
+            campaignImage: result2?.secure_url,
         });
 
         res.status(201).send(newProject);
