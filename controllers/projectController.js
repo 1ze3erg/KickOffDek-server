@@ -36,8 +36,44 @@ async function createProject(req, res, next) {
     try {
         const { typeId, currencyId, title, target, endDate, coverImage, campaignImage } = req.body;
 
+        const obj = { title, endDate, coverImage, campaignImage };
+
         if (!typeId) {
             throw new CustomErr("typeId is required", 400);
+        }
+
+        if (!currencyId) {
+            throw new CustomErr("currencyId is required", 400);
+        }
+        
+        Object.keys(obj).forEach((elem) => {
+            if (!obj[elem] || obj[elem].trim() === "") {
+                throw new CustomErr(`${elem} is required`, 400);
+            }
+        });
+
+
+        if (!target) {
+            throw new CustomErr("target is required", 400);
+        }
+
+        if (isNaN(target)) {
+            throw new CustomErr("target must be numeric", 400);
+        }
+
+        if (!new Date(endDate).getTime()) {
+            throw new CustomErr("endDate must be datetime string", 400);
+        }
+
+        const findType = await Type.findOne({ where: { id: typeId } });
+        const findCurrency = await Currency.findOne({ where: { id: currencyId } });
+
+        if (!findType) {
+            throw new CustomErr("type not found", 400);
+        }
+
+        if (!findCurrency) {
+            throw new CustomErr("currency not found", 400);
         }
 
         const category = await Category.findAll();
@@ -45,7 +81,7 @@ async function createProject(req, res, next) {
         const newProject = await Project.create({
             typeId,
             categoryId: category[0].id,
-            currencyId: currencyId,
+            currencyId,
             creatorUserId: req.user.id,
             title,
             status: "draft",
@@ -78,7 +114,7 @@ async function updateProject(req, res, next) {
             instagram,
             twitter,
             website,
-            coverImage, 
+            coverImage,
             campaignImage,
             campaignStory,
             pitchVideo,
