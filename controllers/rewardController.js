@@ -17,6 +17,16 @@ async function getRewardByProjectId(req, res, next) {
     }
 }
 
+async function getRewardById(req, res, next) {
+    try {
+        const { id } = req.params;
+        const reward = await Reward.findOne({ where: { id } });
+        res.status(200).send(reward);
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function createReward(req, res, next) {
     try {
         const {
@@ -203,4 +213,4 @@ async function deleteReward(req, res, next) {
     }
 }
 
-module.exports = { getRewardByProjectId, createReward, updateReward, deleteReward };
+module.exports = { getRewardByProjectId, getRewardById, createReward, updateReward, deleteReward };
