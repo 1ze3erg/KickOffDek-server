@@ -20,4 +20,19 @@ async function createImageUrl(req, res, next) {
     }
 }
 
-module.exports = { createImageUrl };
+async function uploadEditorImage(req, res, next) {
+    try {
+        console.log(req.files.upload);
+        const result = await uploadPromise(req.files.upload.path);
+        fs.unlinkSync(req.files.upload.path);
+        console.log(result.secure_url);
+        res.status(201).send({
+            uploaded: true,
+            url: result.secure_url,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { createImageUrl, uploadEditorImage };
