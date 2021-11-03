@@ -78,7 +78,7 @@ async function createReward(req, res, next) {
         }
 
         if (
-            estDeliveryYear < new Date().getFullYear() ||
+            estDeliveryYear <= new Date().getFullYear() &&
             monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
         ) {
             throw new CustomErr("estDelivery is passed", 400);
@@ -134,7 +134,7 @@ async function updateReward(req, res, next) {
             throw new CustomErr("projectId is required", 400);
         }
 
-        if (estDeliveryMonth) {
+        if (estDeliveryMonth && estDeliveryYear) {
             if (estDeliveryMonth.length !== 3) {
                 throw new CustomErr("estDeliveryMonth must have 3 character", 400);
             }
@@ -142,11 +142,9 @@ async function updateReward(req, res, next) {
             if (!monthArr.includes(estDeliveryMonth)) {
                 throw new CustomErr("estDeliveryMonth is invalid", 400);
             }
-        }
 
-        if (estDeliveryYear) {
             if (
-                estDeliveryMonth < new Date().getFullYear() ||
+                estDeliveryYear <= new Date().getFullYear() &&
                 monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
             ) {
                 throw new CustomErr("estDelivery is passed", 400);
