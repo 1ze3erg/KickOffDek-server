@@ -34,9 +34,39 @@ async function getProjectByCreatorUserId(req, res, next) {
 
 async function createProject(req, res, next) {
     try {
-        const { typeId, currencyId, title, target, endDate, coverImage, campaignImage } = req.body;
+        const {
+            categoryId,
+            typeId,
+            currencyId,
+            title,
+            about,
+            target,
+            endDate,
+            organization,
+            tagline,
+            province,
+            country,
+            facebook,
+            instagram,
+            twitter,
+            website,
+            coverImage,
+            campaignImage,
+        } = req.body;
 
-        const obj = { title, endDate, coverImage, campaignImage };
+        const obj = {
+            title,
+            target,
+            endDate,
+            organization,
+            tagline,
+            coverImage,
+            campaignImage,
+        };
+
+        if (!categoryId) {
+            throw new CustomErr("typeId is required", 400);
+        }
 
         if (!typeId) {
             throw new CustomErr("typeId is required", 400);
@@ -45,13 +75,12 @@ async function createProject(req, res, next) {
         if (!currencyId) {
             throw new CustomErr("currencyId is required", 400);
         }
-        
+
         Object.keys(obj).forEach((elem) => {
             if (!obj[elem] || obj[elem].trim() === "") {
                 throw new CustomErr(`${elem} is required`, 400);
             }
         });
-
 
         if (!target) {
             throw new CustomErr("target is required", 400);
@@ -79,14 +108,23 @@ async function createProject(req, res, next) {
         const category = await Category.findAll();
 
         const newProject = await Project.create({
+            categoryId,
             typeId,
-            categoryId: category[0].id,
             currencyId,
             creatorUserId: req.user.id,
             title,
+            about,
             status: "draft",
             target,
             endDate,
+            organization,
+            tagline,
+            province,
+            country,
+            facebook,
+            instagram,
+            twitter,
+            website,
             coverImage,
             campaignImage,
         });
