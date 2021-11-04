@@ -1,13 +1,9 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const CustomErr = require("../helpers/err");
 const { User } = require("../models");
 const { isEmail, isStrongPassword } = require("validator");
-const CustomErr = require("../helpers/err");
-const fs = require("fs");
-const util = require("util");
-const cloudinary = require("cloudinary").v2;
 const { registerEmail } = require("../config/nodemailer");
-const uploadPromise = util.promisify(cloudinary.uploader.upload);
 
 async function registerUser(req, res, next) {
     try {
