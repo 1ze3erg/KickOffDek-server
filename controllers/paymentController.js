@@ -6,7 +6,7 @@ const monthArr = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "1
 
 async function getPaymentByUserId(req, res, next) {
     try {
-        const payments = await Payment.findAll({ userId: req.user.id });
+        const payments = await Payment.findAll({ where: { userId: req.user.id } });
         res.status(200).send(payments);
     } catch (err) {
         next(err);
@@ -116,24 +116,21 @@ async function updatePayment(req, res, next) {
         if (findPayment.userId !== req.user.id) {
             throw new CustomErr("You can't update this payment");
         }
-        
-        await Payment.update(
-            { paymentName, cardProvider, cardNumber, cardHolderName, expiration },
-            { where: { id } }
-            );
-            
-            res.status(200).send({ msg: "payment has been updated" });
-        } catch (err) {
-            next(err);
-        }
+
+        await Payment.update({ paymentName, cardProvider, cardNumber, cardHolderName, expiration }, { where: { id } });
+
+        res.status(200).send({ msg: "payment has been updated" });
+    } catch (err) {
+        next(err);
     }
-    
-    async function deletePayment(req, res, next) {
-        try {
+}
+
+async function deletePayment(req, res, next) {
+    try {
         const { id } = req.params;
-        
+
         const findPayment = await Payment.findOne({ where: { id } });
-        
+
         if (!findPayment) {
             throw new CustomErr("payment not found", 400);
         }
