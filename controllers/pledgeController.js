@@ -1,4 +1,4 @@
-const { Pledge, Reward, ShippingAddress, Payment } = require("../models");
+const { Pledge, Reward, ShippingAddress, Payment, Project, Currency } = require("../models");
 const CustomErr = require("../helpers/err");
 const { pledgeEmail } = require("../config/nodemailer");
 
@@ -23,7 +23,10 @@ async function getPledgeByProjectId(req, res, next) {
 
 async function getPledgeByUserId(req, res, next) {
     try {
-        const pledges = await Pledge.findAll({ where: { userId: req.user.id } });
+        const pledges = await Pledge.findAll({
+            where: { userId: req.user.id },
+            include: [{ model: Reward, include: { model: Project, include: Currency } }, ShippingAddress, Payment],
+        });
         res.status(200).send(pledges);
     } catch (err) {
         next(err);
