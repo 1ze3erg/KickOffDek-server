@@ -1,10 +1,10 @@
-const { Comment, Project } = require("../models");
+const { Comment, Project, User } = require("../models");
 const CustomErr = require("../helpers/err");
 
 async function getCommentByProjectId(req, res, next) {
     try {
         const { projectId } = req.params;
-        const comments = await Comment.findAll({ where: { projectId } });
+        const comments = await Comment.findAll({ where: { projectId }, include: User });
         res.status(200).send(comments);
     } catch (err) {
         next(err);
