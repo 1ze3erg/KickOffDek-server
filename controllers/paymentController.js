@@ -49,8 +49,15 @@ async function createPayment(req, res, next) {
             throw new CustomErr("expiration month is invalid", 400);
         }
 
-        if (expiration.slice(0, 2) - 1 < new Date().getMonth() || expiration.slice(2) < new Date().getFullYear()) {
-            throw new CustomErr("expiration month or year is passed", 400);
+        if (expiration.slice(2) <= new Date().getFullYear()) {
+            if (expiration.slice(2) < new Date().getFullYear()) {
+                throw new CustomErr("expiration month or year is passed", 400);
+            } else if (
+                expiration.slice(2) === new Date().getFullYear() &&
+                expiration.slice(0, 2) - 1 < new Date().getMonth()
+            ) {
+                throw new CustomErr("expiration month or year is passed", 400);
+            }
         }
 
         const newPayment = await Payment.create({
@@ -102,8 +109,15 @@ async function updatePayment(req, res, next) {
                 throw new CustomErr("expiration month is invalid", 400);
             }
 
-            if (expiration.slice(0, 2) - 1 < new Date().getMonth() || expiration.slice(2) < new Date().getFullYear()) {
-                throw new CustomErr("expiration month or year is passed", 400);
+            if (expiration.slice(2) <= new Date().getFullYear()) {
+                if (expiration.slice(2) < new Date().getFullYear()) {
+                    throw new CustomErr("expiration month or year is passed", 400);
+                } else if (
+                    expiration.slice(2) === new Date().getFullYear() &&
+                    expiration.slice(0, 2) - 1 < new Date().getMonth()
+                ) {
+                    throw new CustomErr("expiration month or year is passed", 400);
+                }
             }
         }
 
