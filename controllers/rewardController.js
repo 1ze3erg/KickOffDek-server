@@ -77,11 +77,15 @@ async function createReward(req, res, next) {
             throw new CustomErr("estDeliveryYear is required", 400);
         }
 
-        if (
-            estDeliveryYear <= new Date().getFullYear() &&
-            monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
-        ) {
-            throw new CustomErr("estDelivery is passed", 400);
+        if (estDeliveryYear <= new Date().getFullYear()) {
+            if (estDeliveryYear < new Date().getFullYear()) {
+                throw new CustomErr("estDelivery is passed", 400);
+            } else if (
+                estDeliveryYear === new Date().getFullYear() &&
+                monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
+            ) {
+                throw new CustomErr("estDelivery is passed", 400);
+            }
         }
 
         const findProject = await Project.findOne({ where: { id: projectId } });
@@ -143,11 +147,16 @@ async function updateReward(req, res, next) {
                 throw new CustomErr("estDeliveryMonth is invalid", 400);
             }
 
-            if (
-                estDeliveryYear <= new Date().getFullYear() &&
-                monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
-            ) {
-                throw new CustomErr("estDelivery is passed", 400);
+        if (estDeliveryYear && estDeliveryMonth) {
+            if (estDeliveryYear <= new Date().getFullYear()) {
+                if (estDeliveryYear < new Date().getFullYear()) {
+                    throw new CustomErr("estDelivery is passed", 400);
+                } else if (
+                    estDeliveryYear === new Date().getFullYear() &&
+                    monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
+                ) {
+                    throw new CustomErr("estDelivery is passed", 400);
+                }
             }
         }
 

@@ -75,7 +75,7 @@ async function createPledge(req, res, next) {
             throw new CustomErr("payment not found", 400);
         }
 
-        if (findReward.maxQtyPerPledge < quantity) {
+        if (findReward.maxQtyPerPledge && findReward.maxQtyPerPledge < quantity) {
             throw new CustomErr(`You can't pledge more than ${findReward.maxQtyPerPledge}`, 400);
         }
 
