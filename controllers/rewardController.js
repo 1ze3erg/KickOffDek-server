@@ -147,14 +147,13 @@ async function updateReward(req, res, next) {
                 throw new CustomErr("estDeliveryMonth is invalid", 400);
             }
 
-        if (estDeliveryYear && estDeliveryMonth) {
             if (estDeliveryYear <= new Date().getFullYear()) {
                 if (estDeliveryYear < new Date().getFullYear()) {
                     throw new CustomErr("estDelivery is passed", 400);
                 } else if (
                     estDeliveryYear === new Date().getFullYear() &&
                     monthArr.findIndex((elem) => elem === estDeliveryMonth) < new Date().getMonth()
-                ) {
+                 ) {
                     throw new CustomErr("estDelivery is passed", 400);
                 }
             }
