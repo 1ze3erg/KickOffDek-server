@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
 const socketio = require("socket.io");
+const schedule = require("node-schedule");
 const adminRoute = require("./routes/adminRoute");
 const userRoute = require("./routes/userRoute");
 const shippingAddressRoute = require("./routes/shippingAddressRoute");
@@ -23,6 +24,7 @@ const uploadRoute = require("./routes/uploadRoute");
 const errController = require("./controllers/errController");
 const port = process.env.PORT || 8888;
 
+const { Project, Pledge, Reward } = require("./models");
 const { checkTotalPledgeAmount } = require("./events/pledgeEvent");
 
 const app = express();
@@ -91,4 +93,29 @@ io.of("/users").on("connection", (socket) => {
     });
 });
 
-module.exports = server;
+const job = schedule.scheduleJob("*/10 * * * * *", async () => {
+    console.log("check project end date");
+    const projects = await Project.findAll({ where: { status: "live" } });
+    projects.forEach(async (elem, idx) => {
+        const pledges = await Pledge.findAll({ include: { model: Reward, where: { projectId: elem.id } } });
+        const pledgeAmount = pledges.reduce((total, elem) => total + +elem.amount, 0);
+        console.log(
+            `Project ${elem.id}, endDate = ${new Date(elem.endDate).toLocaleString()}, target = ${
+                elem.target
+            }, pledge amount = ${pledgeAmount}`
+        );
+        if (new Date() >= elem.endDate) {
+            if (pledgeAmount >= elem.target) {
+                console.log(`Project ${elem.id} success`);
+                await Project.update({ status: "successful" }, { where: { id: elem.id } })
+            } else {
+                console.log(`Project ${elem.id} fail`);
+                await Project.update({ status: "failed" }, { where: { id: elem.id } })
+            }
+        }
+        console.log("----------------------------------");
+        if (projects.length - 1 === idx) {
+            console.log("--- checked ---");
+        }
+    });
+});
