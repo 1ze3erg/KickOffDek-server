@@ -20,7 +20,7 @@ router.put("/update/:id", passport.authenticate("jwt-user", { session: false }),
 router.put("/user-update-status/:id", passport.authenticate("jwt-user", { session: false }), updateProjectStatusByUser);
 router.put(
     "/admin-update-status/:id",
-    passport.authenticate("jwt-admin", { session: false }),
+    // passport.authenticate("jwt-admin", { session: false }),
     updateProjectStatusByAdmin
 );
 router.delete("/delete/:id", passport.authenticate("jwt-user", { session: false }), deleteProject);
